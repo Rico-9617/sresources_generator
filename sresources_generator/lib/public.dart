@@ -1,0 +1,1 @@
+export 'public/app_language_texts.dart';

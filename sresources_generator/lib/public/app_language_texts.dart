@@ -1,0 +1,3 @@
+class AppTextsSource {
+  const AppTextsSource();
+}
