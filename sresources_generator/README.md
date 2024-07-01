@@ -53,7 +53,7 @@ The language text contents will be like:<br>
 @{test1} and other string in this format(@{...}) are the patterns which can be replaced with real values when use, after generating, test1 will become the parameter of the text get function.<br>
 
 
-#### 3、text resources:
+#### 3、route resources:
 ##### 1). for GetX:
 Add annotations to your page class like:
 
@@ -111,7 +111,7 @@ configurations in your project pubspec.yaml<br>
         languages_get: #GetX library style
             enabled: true #enable generator(opposite with languages config)
             source: /lib/language_folder/en.dart #language text file, optional, can use AppTextsSource annotation see example
-         name: AppTexts #class name
+            name: AppTexts #class name
 
         //in writing...
         routes_get: #GetX library style page route
