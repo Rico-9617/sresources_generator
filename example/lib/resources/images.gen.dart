@@ -12,9 +12,9 @@ class TestImages{
 
   static Map<String, String> get _default {
     _defaultRes ??= {
-        "dx_game_tg":"assets/images/0/dx_game_tg.png",
-        "Group":"assets/images/0/Group.png",
-        "test_qwer1":"assets/images/0/test_qwer1.png",
+        "world":"assets/images/0/world.png",
+        "home":"assets/images/0/home.png",
+        "picture":"assets/images/0/picture.png",
     };
     return _defaultRes!;
   }
@@ -28,9 +28,9 @@ class TestImages{
   static updateTheme(String theme) {
     _theme = theme;
     
-    _dx_game_tg = null;
-    _Group = null;
-    _test_qwer1 = null;
+    _world = null;
+    _home = null;
+    _picture = null;
   }
 
   static String _findResource(String name){
@@ -38,8 +38,9 @@ class TestImages{
     if(themeResources == null) {
       themeResources = switch (_theme) {
           "1" => {
-         "dx_game_tg":"assets/images/1/dx_game_tg.png",
-         "test_qwer1":"assets/images/1/test_qwer1.png",
+         "world":"assets/images/1/world.png",
+         "home":"assets/images/1/home.png",
+         "picture":"assets/images/1/picture.png",
          },
         _ => _default,
       };
@@ -50,22 +51,22 @@ class TestImages{
 
   
 
-  static String? _dx_game_tg;
-  static String get dx_game_tg{
-    _dx_game_tg ??= _findResource("dx_game_tg");
-    return _dx_game_tg!;
+  static String? _world;
+  static String get world{
+    _world ??= _findResource("world");
+    return _world!;
   }
 
-  static String? _Group;
-  static String get Group{
-    _Group ??= _findResource("Group");
-    return _Group!;
+  static String? _home;
+  static String get home{
+    _home ??= _findResource("home");
+    return _home!;
   }
 
-  static String? _test_qwer1;
-  static String get test_qwer1{
-    _test_qwer1 ??= _findResource("test_qwer1");
-    return _test_qwer1!;
+  static String? _picture;
+  static String get picture{
+    _picture ??= _findResource("picture");
+    return _picture!;
   }
 }
       

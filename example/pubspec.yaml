@@ -55,7 +55,7 @@ sresources:
   output: lib/resources/ #output folder
 
   colors:
-    enabled: false #enable generator
+    enabled: true #enable generator
     path: assets/color/ #color xml file folder path
     default: 0 #color xml file for default theme
 
@@ -66,14 +66,15 @@ sresources:
     name: TestImages
 
   languages:
-    enabled: true #enable generator
+    enabled: false #enable generator
 
   languages_get: #GetX library style
     enabled: true #enable generator(opposite with languages config)
 #    source: lib/translations/en.dart
 
   routes_get: #GetX library style page route
-    enabled: false #enable generator
+    enabled: true #enable generator
+    name: TestRoutes
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
