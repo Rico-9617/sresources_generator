@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:build/build.dart';
 
+// image class generate function
 Future<String?> generateImageClass(
   BuildStep buildStep,
   Map<dynamic, dynamic> config,

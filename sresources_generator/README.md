@@ -1,12 +1,11 @@
 A generator for colors,images,language texts etc.<br>
 Can adjust to GetX library.<br>
-Learnt from flutter_gen source_gen.<br>
 
 #### 1、image files:
 Just put under project_root/assets/image/(dark|light) folder, dark and light stands for two themes, so that can add other theme folders, and the name can customize.<br>
 Note that need add sub folders to the pubspec.yaml, or sub folders won't be build into packages.<br>
 The name of picture of each theme should be the same.<br>
-If a image doesn't exist in a specific theme folder, it will auto use the version in default theme folder which configured in pubspec.yaml when use the theme.<br> 
+If a image doesn't exist in a specific theme folder, it will auto use the version in default theme folder which configured in pubspec.yaml when use the theme.<br>
 
 #### 2、color resources:
 Create a sub folder of assets named color(or else, but should configure in the pubspec.yaml as below tutorial shows), and then can create xxx.xml file, the file name better according to your theme's value(like the dark/light folder under image folder).<br>

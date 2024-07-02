@@ -1,15 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
-import 'dart:io';
 
 import 'package:build/build.dart';
-import 'package:flutter_gen_core/flutter_generator.dart';
-import 'package:flutter_gen_core/settings/config.dart';
 import 'package:glob/glob.dart';
-import 'package:sresources_generator/generator/_tools.dart';
 import 'package:xml2json/xml2json.dart';
 
+// color generate function
 Future<String?> generateColorClass(
   BuildStep buildStep,
   Map<dynamic, dynamic> config,

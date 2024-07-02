@@ -1,13 +1,9 @@
-import 'dart:async';
 import 'dart:io';
 
-import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
-import 'package:glob/glob.dart';
 import 'package:sresources_generator/generator/_tools.dart';
-import 'package:source_gen/source_gen.dart';
-import 'package:sresources_generator/public/app_language_texts.dart';
 
+// i18n generate for GetX
 class GetLibTextsGenerator {
   late bool enabled;
   late BuildStep _buildStep;
@@ -45,6 +41,7 @@ class GetLibTextsGenerator {
     }
   }
 
+  // parse each item scanned by builder
   parseAssetItem(AssetId assetId) async {
     if (!enabled || _contentCompleted) return;
 
@@ -94,6 +91,7 @@ class GetLibTextsGenerator {
     }
   }
 
+  // get final class content
   String? getContent() {
     if (!enabled || _fieldStr.isEmpty) return null;
 

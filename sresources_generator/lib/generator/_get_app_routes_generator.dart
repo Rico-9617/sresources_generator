@@ -1,12 +1,10 @@
-import 'dart:async';
-
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
-import 'package:glob/glob.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:sresources_generator/generator/_tools.dart';
 import 'package:sresources_generator/public/app_route_get.dart';
 
+// page class route generate class for GetX
 class GetLibRouteGenerator {
   late bool enabled;
   late Resolver _resolver;
@@ -62,6 +60,7 @@ class GetLibRouteGenerator {
     });
   }
 
+  // get final class content
   String? getContent() {
     if (!enabled) return null;
     if (_fieldStr.isNotEmpty && _getContentStr.isNotEmpty) {

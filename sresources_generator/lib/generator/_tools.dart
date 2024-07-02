@@ -1,7 +1,7 @@
 
 
 
-
+// change string like convert_to_camel_case to convertToCamelCase style
 String convertToCamelCase(String input) {
   List<String> segments = input.split('_');
   for (int i = 0; i < segments.length; i++) {

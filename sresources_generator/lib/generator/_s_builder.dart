@@ -3,20 +3,20 @@ import 'dart:io';
 
 import 'package:build/build.dart';
 import 'package:flutter_gen_core/flutter_generator.dart';
-import 'package:flutter_gen_core/generators/colors_generator.dart';
 import 'package:flutter_gen_core/settings/config.dart';
 import 'package:flutter_gen_core/utils/map.dart';
 import 'package:glob/glob.dart';
 import 'package:sresources_generator/generator/_get_app_routes_generator.dart';
-import 'package:sresources_generator/generator/_tools.dart';
 import 'package:yaml/yaml.dart';
 
 import '_color_resource_generator.dart';
-import '_image_resource_generator.dart';
 import '_get_language_generator.dart';
+import '_image_resource_generator.dart';
 
+// builder function
 Builder sResourceBuilder(BuilderOptions options) => SResourceBuilder();
 
+// builder class
 class SResourceBuilder extends Builder {
   final generator = FlutterGenerator(File('pubspec.yaml'));
   late final _config;
@@ -82,7 +82,6 @@ class SResourceBuilder extends Builder {
   }
 
   @override
-  // TODO: implement buildExtensions
   Map<String, List<String>> get buildExtensions {
     if (extensions.isEmpty) {
       final parent = customConfig['output'] ?? 'lib/gen/';

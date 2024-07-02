@@ -1,4 +1,4 @@
-
+// GetX route generate annotation
 class AppRouteGet {
   final String path;
   final String? name; //if null(default) then generator will use Class name as the name of the route field
@@ -11,7 +11,7 @@ class AppRouteGet {
   });
 }
 
-
+// GetX page shown animation
 class GetTransition {
   GetTransition._();
 
