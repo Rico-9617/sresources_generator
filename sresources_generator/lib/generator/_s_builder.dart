@@ -20,7 +20,7 @@ Builder sResourceBuilder(BuilderOptions options) => SResourceBuilder();
 class SResourceBuilder extends Builder {
   final generator = FlutterGenerator(File('pubspec.yaml'));
   late final Config? _config;
-  late final Map<dynamic,dynamic> customConfig;
+  late final Map<dynamic, dynamic> customConfig;
   Map<String, List<String>> extensions = {};
 
   SResourceBuilder() {
@@ -40,8 +40,10 @@ class SResourceBuilder extends Builder {
 
     final imagesContent = results[0];
     final colorsContent = results[1];
-    final getRouteGenerator = GetLibRouteGenerator(buildStep, customConfig['routes_get']);
-    final getTextGenerator = GetLibTextsGenerator(buildStep, customConfig['languages_get']);
+    final getRouteGenerator =
+        GetLibRouteGenerator(buildStep, customConfig['routes_get']);
+    final getTextGenerator =
+        GetLibTextsGenerator(buildStep, customConfig['languages_get']);
 
     final assetIds = buildStep.findAssets(Glob('lib/**'));
     await for (final assetId in assetIds) {

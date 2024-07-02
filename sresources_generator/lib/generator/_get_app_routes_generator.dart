@@ -30,8 +30,10 @@ class GetLibRouteGenerator {
     library.units.forEach((unit) {
       unit.classes.whereType().forEach((classElement) {
         ElementAnnotation? annotation = null;
-        for(final element in classElement.metadata) {
-          if(element is ElementAnnotation && (element.element?.displayName == 'AppRouteGet' || element.element?.name == 'AppRouteGet' )) {
+        for (final element in classElement.metadata) {
+          if (element is ElementAnnotation &&
+              (element.element?.displayName == 'AppRouteGet' ||
+                  element.element?.name == 'AppRouteGet')) {
             annotation = element;
             break;
           }
@@ -43,12 +45,16 @@ class GetLibRouteGenerator {
           final name = nameValue == null
               ? convertToCamelCase(classElement.name)
               : nameValue;
-          _fieldStr.write('  static const $name = "${annotationValue?.getField('path')?.toStringValue()}";\n');
-          final hasConstConstructor = classElement.constructors.any((ConstructorElement constructor) => constructor.isConst);
+          _fieldStr.write(
+              '  static const $name = "${annotationValue?.getField('path')?.toStringValue()}";\n');
+          final hasConstConstructor = classElement.constructors
+              .any((ConstructorElement constructor) => constructor.isConst);
           final getContent = StringBuffer(
               'GetPage(name:${name},page: ()=> ${hasConstConstructor ? 'const' : ''} ${classElement.name}(),');
-          final transition = annotationValue?.getField('transition')?.toStringValue();
-          final transitionValue = transition == null ? defaultTransition : transition;
+          final transition =
+              annotationValue?.getField('transition')?.toStringValue();
+          final transitionValue =
+              transition == null ? defaultTransition : transition;
           if (transitionValue != null && transitionValue.isNotEmpty) {
             getContent.write('transition: $transitionValue');
           }
@@ -81,5 +87,4 @@ $_getContentStr
     }
     return null;
   }
-
 }

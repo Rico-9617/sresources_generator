@@ -1,7 +1,8 @@
 // GetX route generate annotation
 class AppRouteGet {
   final String path; //route
-  final String? name; //if null(default) then generator will use Class name as the name of the route field
+  final String?
+      name; //if null(default) then generator will use Class name as the name of the route field
   final String? transition; //just pass Transition.rightToLeft.toString()
 
   const AppRouteGet({
