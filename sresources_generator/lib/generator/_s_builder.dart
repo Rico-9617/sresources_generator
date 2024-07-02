@@ -19,8 +19,8 @@ Builder sResourceBuilder(BuilderOptions options) => SResourceBuilder();
 // builder class
 class SResourceBuilder extends Builder {
   final generator = FlutterGenerator(File('pubspec.yaml'));
-  late final _config;
-  late final customConfig;
+  late final Config? _config;
+  late final Map<dynamic,dynamic> customConfig;
   Map<String, List<String>> extensions = {};
 
   SResourceBuilder() {

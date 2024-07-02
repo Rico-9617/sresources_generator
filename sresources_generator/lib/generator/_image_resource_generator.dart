@@ -6,13 +6,13 @@ import 'package:build/build.dart';
 // image class generate function
 Future<String?> generateImageClass(
   BuildStep buildStep,
-  Map<dynamic, dynamic> config,
+  Map<dynamic, dynamic>? config,
 ) async {
-  if (!(config['enabled'] ?? true)) return null;
+  if (!(config?['enabled'] ?? true)) return null;
 
-  final imagesDir = Directory(config['path'] ?? "assets/images/");
+  final imagesDir = Directory(config?['path'] ?? "assets/images/");
   if (await imagesDir.exists()) {
-    String defaultThemeVal = config['default']?.toString() ?? '0';
+    String defaultThemeVal = config?['default']?.toString() ?? '0';
     final defaultTheme = StringBuffer();
     final otherThemes = StringBuffer();
     final resourceSettings = StringBuffer();
@@ -49,7 +49,7 @@ Future<String?> generateImageClass(
         otherThemes.write('\n         },');
       }
     }
-    final className = config['name'] ?? 'AppImages';
+    final className = config?['name'] ?? 'AppImages';
     return '''
 //auto generate resource file classes
 

@@ -14,13 +14,13 @@ class GetLibTextsGenerator {
 
   GetLibTextsGenerator(
     BuildStep buildStep,
-    Map<dynamic, dynamic> config,
+    Map<dynamic, dynamic>? config,
   ) {
-    enabled = config['enabled'] ?? true;
+    enabled = config?['enabled'] ?? true;
     if (enabled) {
-      className = config['name'] ?? 'AppTexts';
+      className = config?['name'] ?? 'AppTexts';
       _fieldStr = StringBuffer();
-      final sourcePath = config['source']?.toString();
+      final sourcePath = config?['source']?.toString();
       String sourceString = "";
       if (sourcePath != null && sourcePath.isNotEmpty) {
         final file = File(sourcePath);

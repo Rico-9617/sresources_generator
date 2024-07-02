@@ -1,8 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
-import 'package:source_gen/source_gen.dart';
 import 'package:sresources_generator/generator/_tools.dart';
-import 'package:sresources_generator/public/app_route_get.dart';
 
 // page class route generate class for GetX
 class GetLibRouteGenerator {
@@ -14,44 +12,45 @@ class GetLibRouteGenerator {
   late String className;
   late String? defaultTransition;
 
-  GetLibRouteGenerator(BuildStep buildStep, Map<dynamic, dynamic> config) {
-    enabled = config['enabled'] ?? true;
+  GetLibRouteGenerator(BuildStep buildStep, Map<dynamic, dynamic>? config) {
+    enabled = config?['enabled'] ?? true;
     if (enabled) {
       _fieldStr = StringBuffer();
       _getContentStr = StringBuffer();
       _importStr = StringBuffer();
       _resolver = buildStep.resolver;
-      className = config['name'] ?? 'AppRoutes';
-      defaultTransition = config['transition'];
+      className = config?['name'] ?? 'AppRoutes';
+      defaultTransition = config?['transition'];
     }
   }
 
   parseAssetItem(AssetId assetId) async {
     if (!enabled) return;
-    print(
-        'Found annotated file: classElement ${assetId.package}   ${assetId.uri}   ${assetId.pathSegments}');
     final library = await _resolver.libraryFor(assetId);
     library.units.forEach((unit) {
-      unit.classes.whereType<ClassElement>().forEach((classElement) {
-        final annotation = TypeChecker.fromRuntime(AppRouteGet)
-            .firstAnnotationOf(classElement);
+      unit.classes.whereType().forEach((classElement) {
+        ElementAnnotation? annotation = null;
+        for(final element in classElement.metadata) {
+          if(element is ElementAnnotation && (element.element?.displayName == 'AppRouteGet' || element.element?.name == 'AppRouteGet' )) {
+            annotation = element;
+            break;
+          }
+        }
         if (annotation != null) {
           _importStr.write("import '${assetId.uri}';\n");
-          final annotationReader = ConstantReader(annotation);
-          final nameValue = annotationReader.read('name');
-          final name = nameValue.isNull
+          final annotationValue = annotation.computeConstantValue();
+          final nameValue = annotationValue?.getField('name')?.toStringValue();
+          final name = nameValue == null
               ? convertToCamelCase(classElement.name)
-              : nameValue.stringValue;
-          _fieldStr.write('    static const $name = "${annotationReader.read('path').stringValue}";\n');
-          final hasConstConstructor =
-          classElement.constructors.any((constructor) => constructor.isConst);
+              : nameValue;
+          _fieldStr.write('  static const $name = "${annotationValue?.getField('path')?.toStringValue()}";\n');
+          final hasConstConstructor = classElement.constructors.any((ConstructorElement constructor) => constructor.isConst);
           final getContent = StringBuffer(
               'GetPage(name:${name},page: ()=> ${hasConstConstructor ? 'const' : ''} ${classElement.name}(),');
-          final transition = annotationReader.read('transition');
-          if (!transition.isNull) {
-            getContent.write('transition: ${transition.stringValue}');
-          }else if(defaultTransition != null && defaultTransition!.isNotEmpty){
-            getContent.write('transition: ${defaultTransition}');
+          final transition = annotationValue?.getField('transition')?.toStringValue();
+          final transitionValue = transition == null ? defaultTransition : transition;
+          if (transitionValue != null && transitionValue.isNotEmpty) {
+            getContent.write('transition: $transitionValue');
           }
           getContent.write('),');
           _getContentStr.write('    ${getContent}\n');

@@ -8,13 +8,13 @@ import 'package:xml2json/xml2json.dart';
 // color generate function
 Future<String?> generateColorClass(
   BuildStep buildStep,
-  Map<dynamic, dynamic> config,
+  Map<dynamic, dynamic>? config,
 ) async {
-  if (!(config['enabled'] ?? true)) return null;
+  if (!(config?['enabled'] ?? true)) return null;
   final assetReader =
-      buildStep.findAssets(Glob('${config['path'] ?? 'assets/color/'}*.xml'));
+      buildStep.findAssets(Glob('${config?['path'] ?? 'assets/color/'}*.xml'));
   final xml2Json = Xml2Json();
-  String defaultThemeVal = config['default']?.toString() ?? '0';
+  String defaultThemeVal = config?['default']?.toString() ?? '0';
   final defaultTheme = StringBuffer();
   final otherThemes = StringBuffer();
   final resourceSettings = StringBuffer();
@@ -59,7 +59,7 @@ Future<String?> generateColorClass(
     }
   }
   if (defaultTheme.isNotEmpty) {
-    final className = config['name'] ?? 'AppColors';
+    final className = config?['name'] ?? 'AppColors';
     return '''
 //auto generate resource file classes
 import 'dart:ui';
