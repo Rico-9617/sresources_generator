@@ -88,35 +88,36 @@ configurations in your project pubspec.yaml<br>
 
     // optional configurations
     sresources:
-        output: lib/resources/ #output folder
+        output: lib/resources/ //output folder
         
         colors:
-            enabled: true #enable generator
-            path: assets/color/ #color xml file folder path
-            default: 0 #color xml file for default theme, note that each color xml should named with the theme value
-            name: AppColors #class name
+            enabled: true //enable generator
+            path: assets/color/ //color xml file folder path
+            default: 0 //color xml file for default theme, note that each color xml should named with the theme value
+            name: AppColors //class name
     
         images:
-            enabled: true #enable generator
-            path: assets/images/ #image file folder(parent) path
-            default: 0 #image file folder for default theme, note that each folder should named with the theme value
-            name: AppImagess #class name
+            enabled: true //enable generator
+            path: assets/images/ //image file folder(parent) path
+            default: 0 //image file folder for default theme, note that each folder should named with the theme value
+            name: AppImagess //class name
 
         //haven't implement this
         languages:
-            enabled: true #enable generator
-            source: /lib/language_folder/en.dart #language text file, optional, can use AppTextsSource annotation see example
-            name: AppTexts #class name
+            enabled: true //enable generator
+            source: /lib/language_folder/en.dart //language text file, optional, can use AppTextsSource annotation see example
+            name: AppTexts //class name
             
-        languages_get: #GetX library style
-            enabled: true #enable generator(opposite with languages config)
-            source: /lib/language_folder/en.dart #language text file, optional, can use AppTextsSource annotation see example
-            name: AppTexts #class name
+        languages_get: //GetX library style
+            enabled: true //enable generator(opposite with languages config)
+            source: /lib/language_folder/en.dart //language text file, optional, can use AppTextsSource annotation see example
+            name: AppTexts //class name
+            transition: Transition.rightToLeft //default shown animation
 
         //in writing...
-        routes_get: #GetX library style page route
-            enabled: true #enable generator
-            name: AppRoutes #class name
+        routes_get: //GetX library style page route
+            enabled: true //enable generator
+            name: AppRoutes //class name
             
 
 

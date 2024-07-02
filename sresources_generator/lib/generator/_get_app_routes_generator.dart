@@ -14,6 +14,7 @@ class GetLibRouteGenerator {
   late StringBuffer _fieldStr;
   late StringBuffer _getContentStr;
   late String className;
+  late String? defaultTransition;
 
   GetLibRouteGenerator(BuildStep buildStep, Map<dynamic, dynamic> config) {
     enabled = config['enabled'] ?? true;
@@ -23,6 +24,7 @@ class GetLibRouteGenerator {
       _importStr = StringBuffer();
       _resolver = buildStep.resolver;
       className = config['name'] ?? 'AppRoutes';
+      defaultTransition = config['transition'];
     }
   }
 
@@ -50,6 +52,8 @@ class GetLibRouteGenerator {
           final transition = annotationReader.read('transition');
           if (!transition.isNull) {
             getContent.write('transition: ${transition.stringValue}');
+          }else if(defaultTransition != null && defaultTransition!.isNotEmpty){
+            getContent.write('transition: ${defaultTransition}');
           }
           getContent.write('),');
           _getContentStr.write('    ${getContent}\n');

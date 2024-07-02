@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:sresources_generator/public/app_route_get.dart';
 
-@AppRouteGet(path: '/sresdemo/routeTestPage',name: 'routeTest',transition: GetTransition.rightToLeft)
+@AppRouteGet(path: '/sresdemo/routeTestPage',name: 'routeTest',transition: GetTransition.upToDown)
 class RouteTestPage extends StatelessWidget{
   const RouteTestPage({super.key});
 

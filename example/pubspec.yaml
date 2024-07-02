@@ -75,6 +75,7 @@ sresources:
   routes_get: #GetX library style page route
     enabled: true #enable generator
     name: TestRoutes
+    transition: Transition.rightToLeft
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
