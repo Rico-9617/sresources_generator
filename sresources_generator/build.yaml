@@ -1,8 +1,49 @@
 builders:
-  images_resources:
-    import: 'package:sresources_generator/generator/_s_builder.dart'
-    builder_factories: ['sResourceBuilder']
-    build_extensions: { '$package$': ['.gen.dart'] }
+  images_generator:
+    import: 'package:sresources_generator/generator/_image_resource_generator.dart'
+    builder_factories: ['imageResourceBuilder']
+    build_extensions: { '$package$': ['.res.dart'] }
     auto_apply: dependents
     build_to: source
+  colors_generator:
+    import: 'package:sresources_generator/generator/_color_resource_generator.dart'
+    builder_factories: ['colorResourceBuilder']
+    build_extensions: { '$package$': ['.res.dart'] }
+    auto_apply: dependents
+    build_to: source
+  get_routes_combine_generator:
+    import: 'package:sresources_generator/generator/_get_app_routes_generator.dart'
+    builder_factories: ['getRoutesCombineBuilder']
+    build_extensions: { '$package$': ['.route.dart'] }
+    auto_apply: dependents
+    build_to: source
+    required_inputs: [".get_route.part"]
+  get_routes_generator:
+    import: 'package:sresources_generator/generator/_get_app_routes_generator.dart'
+    builder_factories: ['getRoutesBuilder']
+    build_extensions: { '.dart': ['.get_route.part'] }
+    auto_apply: dependents
+    build_to: cache
+    runs_before: ['get_routes_combine_generator']
+    applies_builders: ['part_cleanup']
+  get_texts_confirm_generator:
+    import: 'package:sresources_generator/generator/_get_language_generator.dart'
+    builder_factories: ['getTextsResourceConfirmBuilder']
+    build_extensions: { '$package$': ['.res.dart'] }
+    auto_apply: dependents
+    build_to: source
+    required_inputs: [".get_texts.part"]
+  get_texts_generator:
+    import: 'package:sresources_generator/generator/_get_language_generator.dart'
+    builder_factories: ['getTextResourceBuilder']
+    build_extensions: { '.dart': ['.get_texts.part'] }
+    auto_apply: dependents
+    build_to: cache
+    runs_before: ['get_texts_confirm_generator']
+    applies_builders: ['part_cleanup']
 
+
+post_process_builders:
+  part_cleanup:
+    import: "package:sresources_generator/generator/_s_builder.dart"
+    builder_factory: "sCleanUpBuilder"

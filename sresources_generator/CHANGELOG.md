@@ -6,3 +6,8 @@
 ### Fixed
 - Resolved default build configure parse error.
 - Change the route generator function.
+
+##   1.0.2:
+### Fixed
+- Fix content parse error.
+- Change builder functions.

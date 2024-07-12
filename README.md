@@ -104,12 +104,10 @@ configurations in your project pubspec.yaml<br>
         //haven't implement this
         languages:
             enabled: true //enable generator
-            source: /lib/language_folder/en.dart //language text file, optional, can use AppTextsSource annotation see example
             name: AppTexts //class name
             
         languages_get: //GetX library style
             enabled: true //enable generator(opposite with languages config)
-            source: /lib/language_folder/en.dart //language text file, optional, can use AppTextsSource annotation see example
             name: AppTexts //class name
             transition: Transition.rightToLeft //default shown animation
 

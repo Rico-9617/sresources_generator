@@ -1,52 +1,52 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
+import 'package:glob/glob.dart';
 import 'package:sresources_generator/generator/_tools.dart';
+import 'package:sresources_generator/public.dart';
+import 'package:yaml/yaml.dart';
 
-// page class route generate class for GetX
-class GetLibRouteGenerator {
-  late bool enabled;
-  late Resolver _resolver;
-  late StringBuffer _importStr;
-  late StringBuffer _fieldStr;
-  late StringBuffer _getContentStr;
-  late String className;
-  late String? defaultTransition;
+//page route part generator for GetX
+Builder getRoutesBuilder(BuilderOptions options) => GetRoutesBuilder();
 
-  GetLibRouteGenerator(BuildStep buildStep, Map<dynamic, dynamic>? config) {
-    enabled = config?['enabled'] ?? true;
-    if (enabled) {
-      _fieldStr = StringBuffer();
-      _getContentStr = StringBuffer();
-      _importStr = StringBuffer();
-      _resolver = buildStep.resolver;
-      className = config?['name'] ?? 'AppRoutes';
-      defaultTransition = config?['transition'];
-    }
+class GetRoutesBuilder extends Builder {
+  late Map<dynamic, dynamic> customConfig;
+  Map<String, List<String>> extensions = {};
+
+  GetRoutesBuilder() {
+    final pubspecYamlString = File('pubspec.yaml').readAsStringSync();
+    final pubspecYamlMap = loadYaml(pubspecYamlString) as YamlMap;
+    customConfig = pubspecYamlMap["sresources"]['routes_get'] ?? {};
+    extensions['.dart'] = [
+      ".get_route.part",
+    ];
   }
 
-  parseAssetItem(AssetId assetId) async {
-    if (!enabled) return;
-    final library = await _resolver.libraryFor(assetId);
+  @override
+  FutureOr<void> build(BuildStep buildStep) async {
+    if (customConfig['enabled'] == false) return;
+
+    final importStr = StringBuffer();
+    final fieldStr = StringBuffer();
+    final getContentStr = StringBuffer();
+    final defaultTransition = customConfig['transition'];
+
+    final library = await buildStep.resolver.libraryFor(buildStep.inputId);
     library.units.forEach((unit) {
       unit.classes.whereType().forEach((classElement) {
-        ElementAnnotation? annotation = null;
-        for (final element in classElement.metadata) {
-          if (element is ElementAnnotation &&
-              (element.element?.displayName == 'AppRouteGet' ||
-                  element.element?.name == 'AppRouteGet')) {
-            annotation = element;
-            break;
-          }
-        }
+        ElementAnnotation? annotation =
+            findAnnotation(classElement, AppRouteGet);
         if (annotation != null) {
-          _importStr.write("import '${assetId.uri}';\n");
+          importStr.write("import '${buildStep.inputId.uri}';");
           final annotationValue = annotation.computeConstantValue();
           final nameValue = annotationValue?.getField('name')?.toStringValue();
           final name = nameValue == null
               ? convertToCamelCase(classElement.name)
               : nameValue;
-          _fieldStr.write(
-              '  static const $name = "${annotationValue?.getField('path')?.toStringValue()}";\n');
+          fieldStr.write(
+              '  static const $name = "${annotationValue?.getField('path')?.toStringValue()}";');
           final hasConstConstructor = classElement.constructors
               .any((ConstructorElement constructor) => constructor.isConst);
           final getContent = StringBuffer(
@@ -59,32 +59,82 @@ class GetLibRouteGenerator {
             getContent.write('transition: $transitionValue');
           }
           getContent.write('),');
-          _getContentStr.write('    ${getContent}\n');
+          getContentStr.write('    ${getContent}');
         }
       });
     });
+    if (fieldStr.isEmpty) return;
+    await buildStep.writeAsString(buildStep.allowedOutputs.single,
+        '$importStr$contentSeparator$fieldStr$contentSeparator$getContentStr');
   }
 
-  // get final class content
-  String? getContent() {
-    if (!enabled) return null;
-    if (_fieldStr.isNotEmpty && _getContentStr.isNotEmpty) {
-      return '''
-import 'package:get/get_navigation/src/routes/get_route.dart';
+  @override
+  Map<String, List<String>> get buildExtensions {
+    return extensions;
+  }
+}
+
+//page route part combine builder for GetX
+Builder getRoutesCombineBuilder(BuilderOptions options) =>
+    GetRoutesCombineBuilder();
+
+class GetRoutesCombineBuilder extends Builder {
+  late Map<dynamic, dynamic> customConfig;
+  Map<String, List<String>> extensions = {};
+
+  GetRoutesCombineBuilder() {
+    final pubspecYamlString = File('pubspec.yaml').readAsStringSync();
+    final pubspecYamlMap = loadYaml(pubspecYamlString) as YamlMap;
+    customConfig = pubspecYamlMap["sresources"] ?? {};
+    final parent = customConfig['output'] ?? 'lib/gen/';
+    extensions[r'$package$'] = [
+      "${parent}get_routes.route.dart",
+    ];
+    customConfig = customConfig['routes_get'] ?? {};
+  }
+
+  @override
+  FutureOr<void> build(BuildStep buildStep) async {
+    if (customConfig['enabled'] == false) return;
+    final output = buildStep.allowedOutputs.single;
+    final combined = await buildStep.findAssets(Glob(output.path));
+    if (!(await combined.isEmpty)) return;
+
+    final importStr = StringBuffer();
+    final fieldStr = StringBuffer();
+    final getContentStr = StringBuffer();
+
+    final assetIds = buildStep.findAssets(Glob('lib/**'));
+    await for (final assetId in assetIds) {
+      if (!assetId.path.endsWith('.get_route.part')) continue;
+      final contents =
+          (await buildStep.readAsString(assetId)).split(contentSeparator);
+      importStr.writeln(contents[0]);
+      fieldStr.writeln(contents[1]);
+      getContentStr.writeln(contents[2]);
+    }
+    if (fieldStr.isEmpty) return;
+
+    final className = customConfig['name'] ?? 'AppRoutes';
+
+    await buildStep.writeAsString(output,
+        '''import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 
-$_importStr
+$importStr
 
 class $className{
   $className._();
   
-$_fieldStr
+$fieldStr
   static final pages = [
-$_getContentStr
+$getContentStr
   ];
-}
-    ''';
-    }
-    return null;
+}''');
+  }
+
+  @override
+  Map<String, List<String>> get buildExtensions {
+    return extensions;
   }
 }

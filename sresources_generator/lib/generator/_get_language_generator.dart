@@ -1,60 +1,51 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:build/build.dart';
+import 'package:glob/glob.dart';
 import 'package:sresources_generator/generator/_tools.dart';
+import 'package:yaml/yaml.dart';
 
-// i18n generate for GetX
-class GetLibTextsGenerator {
-  late bool enabled;
-  late BuildStep _buildStep;
-  late StringBuffer _fieldStr;
-  late String className;
+//Text resource generator for GetX
+Builder getTextResourceBuilder(BuilderOptions options) =>
+    GetTextResourceBuilder();
 
-  bool _contentCompleted = false;
+class GetTextResourceBuilder extends Builder {
+  late Map<dynamic, dynamic> customConfig;
+  Map<String, List<String>> extensions = {};
 
-  GetLibTextsGenerator(
-    BuildStep buildStep,
-    Map<dynamic, dynamic>? config,
-  ) {
-    enabled = config?['enabled'] ?? true;
-    if (enabled) {
-      className = config?['name'] ?? 'AppTexts';
-      _fieldStr = StringBuffer();
-      final sourcePath = config?['source']?.toString();
-      String sourceString = "";
-      if (sourcePath != null && sourcePath.isNotEmpty) {
-        final file = File(sourcePath);
-        if (file.existsSync()) {
-          try {
-            sourceString = file.readAsStringSync();
-          } catch (e) {
-            print('Error reading file: $e');
-          }
-        }
-      }
-      if (sourceString.isNotEmpty) {
-        _contentCompleted = true;
-        _parseContent(sourceString);
-      } else {
-        _buildStep = buildStep;
-      }
+  GetTextResourceBuilder() {
+    final pubspecYamlString = File('pubspec.yaml').readAsStringSync();
+    final pubspecYamlMap = loadYaml(pubspecYamlString) as YamlMap;
+    customConfig = pubspecYamlMap["sresources"]['languages_get'] ?? {};
+
+    extensions['.dart'] = [
+      ".get_texts.part",
+    ];
+  }
+
+  @override
+  FutureOr<void> build(BuildStep buildStep) async {
+    if (customConfig['enabled'] == false) return;
+    String content = '';
+    String fileContent = await buildStep.readAsString(buildStep.inputId);
+    if (fileContent.contains('@AppTextsSource()')) {
+      content = _parseContent(fileContent, customConfig['name'] ?? 'AppTexts');
+    }
+
+    if (content.isNotEmpty) {
+      await buildStep.writeAsString(buildStep.allowedOutputs.single, content);
     }
   }
 
-  // parse each item scanned by builder
-  parseAssetItem(AssetId assetId) async {
-    if (!enabled || _contentCompleted) return;
-
-    final assetContent = await _buildStep.readAsString(assetId);
-
-    if (assetContent.contains('AppTextsSource')) {
-      _contentCompleted = true;
-      _parseContent(assetContent);
-    }
+  @override
+  Map<String, List<String>> get buildExtensions {
+    return extensions;
   }
 
-  _parseContent(String content) {
+  String _parseContent(String content, String className) {
     final regex = RegExp(r"Map<[^>]+>\s*(\w+)\s*=\s*{");
+    final contentBuffer = StringBuffer();
 
     final match = regex.firstMatch(content);
     if (match != null) {
@@ -81,27 +72,63 @@ class GetLibTextsGenerator {
           patternMapBuffer.write('"{$pattern}":$pattern,');
         }
         if (patternParameterBuffer.isEmpty) {
-          _fieldStr.write(
+          contentBuffer.write(
               '\n static String get ${convertToCamelCase(key)} => "$key".tr;');
         } else {
-          _fieldStr.write(
+          contentBuffer.write(
               '\n static String ${convertToCamelCase(key)}($patternParameterBuffer) => "$key".trParams({$patternMapBuffer});');
         }
       }
     }
-  }
-
-  // get final class content
-  String? getContent() {
-    if (!enabled || _fieldStr.isEmpty) return null;
-
     return '''
 import 'package:get/get.dart';
 
 class $className{
   $className._();
-$_fieldStr
+$contentBuffer
+}''';
+  }
 }
-      ''';
+
+//Text resource final confirm generator for GetX
+Builder getTextsResourceConfirmBuilder(BuilderOptions options) =>
+    GetTextsResourceConfirmBuilder();
+
+class GetTextsResourceConfirmBuilder extends Builder {
+  late Map<dynamic, dynamic> customConfig;
+  Map<String, List<String>> extensions = {};
+
+  GetTextsResourceConfirmBuilder() {
+    final pubspecYamlString = File('pubspec.yaml').readAsStringSync();
+    final pubspecYamlMap = loadYaml(pubspecYamlString) as YamlMap;
+    customConfig = pubspecYamlMap["sresources"] ?? {};
+    final parent = customConfig['output'] ?? 'lib/gen/';
+    extensions[r'$package$'] = [
+      "${parent}get_texts.res.dart",
+    ];
+    customConfig = customConfig['languages_get'] ?? {};
+  }
+
+  @override
+  FutureOr<void> build(BuildStep buildStep) async {
+    if (customConfig['enabled'] == false) return;
+
+    final output = buildStep.allowedOutputs.single;
+    final combined = await buildStep.findAssets(Glob(output.path));
+    if (!(await combined.isEmpty)) return;
+    final assetIds = buildStep.findAssets(Glob('lib/**'));
+    String content = '';
+    await for (final assetId in assetIds) {
+      if (!assetId.path.endsWith('.get_texts.part')) continue;
+      content = await buildStep.readAsString(assetId);
+      break;
+    }
+    if (content.isEmpty) return;
+    await buildStep.writeAsString(output, content);
+  }
+
+  @override
+  Map<String, List<String>> get buildExtensions {
+    return extensions;
   }
 }
