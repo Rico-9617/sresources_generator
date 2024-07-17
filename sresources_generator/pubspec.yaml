@@ -1,6 +1,6 @@
 name: sresources_generator
 description: "A library use for generate colors,images,language texts classes etc. Also support GetX i18n and route classes generation."
-version: 1.0.2
+version: 1.0.3
 homepage: https://github.com/Rico-9617/sresources_generator/tree/main/example
 repository: https://github.com/Rico-9617/sresources_generator
 documentation: https://github.com/Rico-9617/sresources_generator/tree/main/sresources_generator
@@ -26,6 +26,7 @@ dev_dependencies:
 
   flutter_lints: ^3.0.0
   build_runner: ^2.4.9
+  lints: ^3.0.0
 
 flutter:
 

@@ -46,7 +46,7 @@ class ImageResourceBuilder extends Builder {
 
     final imagesDir = Directory(config?['path'] ?? "assets/images/");
     if (await imagesDir.exists()) {
-      String defaultThemeVal = config?['default']?.toString() ?? '0';
+      String? defaultThemeVal = config?['default']?.toString();
       final defaultTheme = StringBuffer();
       final otherThemes = StringBuffer();
       final resourceSettings = StringBuffer();
@@ -59,6 +59,9 @@ class ImageResourceBuilder extends Builder {
       bool isDefault;
       for (var themeFolder in subFolders) {
         theme = themeFolder.path.split(Platform.pathSeparator).last;
+        if (defaultThemeVal == null || defaultThemeVal.isEmpty) {
+          defaultThemeVal = theme;
+        }
         isDefault = theme == defaultThemeVal;
         if (!isDefault) {
           otherThemes.write('\n          "$theme" => {');
@@ -68,7 +71,7 @@ class ImageResourceBuilder extends Builder {
         for (var file in files) {
           fileName = file.uri.pathSegments.last.split(".")[0];
           if (isDefault) {
-            defaultTheme.write('\n        "$fileName":"${file.path}",');
+            defaultTheme.write('\n        "$fileName": "${file.path}",');
             resourceSettings.write('\n    _$fileName = null;');
             resourceFields.write('''\n\n  static String? _$fileName;
   static String get $fileName{
@@ -76,7 +79,7 @@ class ImageResourceBuilder extends Builder {
     return _$fileName!;
   }''');
           } else {
-            otherThemes.write('\n         "$fileName":"${file.path}",');
+            otherThemes.write('\n         "$fileName": "${file.path}",');
           }
         }
         if (!isDefault) {

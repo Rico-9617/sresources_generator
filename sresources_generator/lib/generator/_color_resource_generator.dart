@@ -50,7 +50,7 @@ class ColorResourceBuilder extends Builder {
     final assetReader = buildStep
         .findAssets(Glob('${config?['path'] ?? 'assets/color/'}*.xml'));
     final xml2Json = Xml2Json();
-    String defaultThemeVal = config?['default']?.toString() ?? '0';
+    String? defaultThemeVal = config?['default']?.toString();
     final defaultTheme = StringBuffer();
     final otherThemes = StringBuffer();
     final resourceSettings = StringBuffer();
@@ -61,6 +61,9 @@ class ColorResourceBuilder extends Builder {
     await for (final assetId in assetReader) {
       final assetContent = await buildStep.readAsString(assetId);
       final theme = assetId.pathSegments.last.split('.')[0];
+      if (defaultThemeVal == null || defaultThemeVal.isEmpty) {
+        defaultThemeVal = theme;
+      }
       final isDefault = theme == defaultThemeVal;
       xml2Json.parse(assetContent);
       json = jsonDecode(xml2Json.toParkerWithAttrs());
@@ -68,28 +71,29 @@ class ColorResourceBuilder extends Builder {
         otherThemes.write('\n          "$theme" => {');
       }
 
-      // print("buildtest ${xml2Json.toParkerWithAttrs()}");
-      // print("buildtest ${json['resources']}  ${json['resources']['color']}");
+      Map<String, String> colorTemp = {};
+      Map<String, String> linkColorTemp = {};
       for (var entry in json['resources']['color']) {
         colorName = entry['_name'];
-        value = entry['value'].replaceFirst('#', '');
-        if (value.length == 6) {
-          value = '0xff$value';
-        } else {
-          value = '0x$value';
+        value = entry['value'];
+        if (value.startsWith('@')) {
+          final linkName = value.replaceFirst('@', '');
+          final tempColor = colorTemp[linkName];
+          if (tempColor != null) {
+            value = tempColor;
+          } else {
+            linkColorTemp[colorName] = linkName;
+            continue;
+          }
         }
-        if (isDefault) {
-          defaultTheme.write('\n        "$colorName":const Color($value),');
-          resourceSettings.write('\n    _$colorName = null;');
-          resourceFields.write('''\n\n  static Color? _$colorName;
-  static Color get $colorName{
-    _$colorName ??= _findResource("$colorName");
-    return _$colorName!;
-  }''');
-        } else {
-          otherThemes.write('\n         "$colorName":const Color($value),');
-        }
+        colorTemp[colorName] = value;
+        _createColorContents(value, isDefault, defaultTheme, colorName,
+            resourceSettings, resourceFields, otherThemes);
       }
+      _findLinkColorValue(linkColorTemp, colorTemp, (name, value) {
+        _createColorContents(value, isDefault, defaultTheme, name,
+            resourceSettings, resourceFields, otherThemes);
+      });
       if (!isDefault) {
         otherThemes.write('\n         },');
       }
@@ -143,5 +147,49 @@ class $className{
       ''';
     }
     return null;
+  }
+
+  void _findLinkColorValue(Map<String, String> linkColor,
+      Map<String, String> colors, Function(String name, String value) onFind) {
+    Map<String, String> leftLinks = {};
+    for (final entry in linkColor.entries) {
+      final tempColor = colors[entry.value];
+      if (tempColor != null) {
+        colors[entry.key] = tempColor;
+        onFind.call(entry.key, tempColor);
+      } else {
+        leftLinks[entry.key] = entry.value;
+      }
+    }
+    if (leftLinks.isNotEmpty && leftLinks.length != linkColor.length) {
+      _findLinkColorValue(leftLinks, colors, onFind);
+    }
+  }
+
+  void _createColorContents(
+      String value,
+      bool isDefault,
+      StringBuffer defaultTheme,
+      String colorName,
+      StringBuffer resourceSettings,
+      StringBuffer resourceFields,
+      StringBuffer otherThemes) {
+    value = value.replaceFirst('#', '');
+    if (value.length == 6) {
+      value = '0xff$value';
+    } else {
+      value = '0x$value';
+    }
+    if (isDefault) {
+      defaultTheme.write('\n        "$colorName": const Color($value),');
+      resourceSettings.write('\n    _$colorName = null;');
+      resourceFields.write('''\n\n  static Color? _$colorName;
+      static Color get $colorName{
+        _$colorName ??= _findResource("$colorName");
+        return _$colorName!;
+      }''');
+    } else {
+      otherThemes.write('\n         "$colorName": const Color($value),');
+    }
   }
 }

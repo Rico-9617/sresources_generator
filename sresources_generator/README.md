@@ -6,16 +6,20 @@ Just put under project_root/assets/image/(dark|light) folder, dark and light sta
 Note that need add sub folders to the pubspec.yaml, or sub folders won't be build into packages.<br>
 The name of picture of each theme should be the same.<br>
 If a image doesn't exist in a specific theme folder, it will auto use the version in default theme folder which configured in pubspec.yaml when use the theme.<br>
+If not config the default image folder in pubspec.yaml, generator will use the first folder's name as the default.<br>
 
 #### 2、color resources:
 Create a sub folder of assets named color(or else, but should configure in the pubspec.yaml as below tutorial shows), and then can create xxx.xml file, the file name better according to your theme's value(like the dark/light folder under image folder).<br>
 And then, add colors in your xxx.xml just like Android color xml format:<br>
 If a color doesn't exist in the specific color xml, it will auto use the version in default theme xml which configured in pubspec.yaml when use the theme.<br>
+Can use @colorName to link to another exist color, if target color not found, this color will not add to the generated file.<br>
+If not config the default color file in pubspec.yaml, generator will use the first file's name as the default.<br>
 
     <?xml version="1.0" encoding="utf-8"?>
     <resources>
         <color name="white">#FFFFFF</color>
         <color name="black">#000000</color>
+        <color name="gray_70">@black</color>
         <color name="gray_70">#EEEEEE</color>
         <color name="gray_410">#979797</color>
         <color name="crimson_red" type="material">#CF2A2A</color>

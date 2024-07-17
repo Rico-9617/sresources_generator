@@ -11,3 +11,8 @@
 ### Fixed
 - Fix content parse error.
 - Change builder functions.
+- 
+##   1.0.3:
+### Fixed
+- Fix image and color default theme judgement.
+- Color generator support link to another color value.
