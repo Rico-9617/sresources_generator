@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:build/build.dart';
+import 'package:sresources_generator/generator/_tools.dart';
 import 'package:yaml/yaml.dart';
 
 //image resources generator
@@ -70,13 +71,14 @@ class ImageResourceBuilder extends Builder {
         final files = subFileEntities.whereType<File>();
         for (var file in files) {
           fileName = file.uri.pathSegments.last.split(".")[0];
+          final shownName = convertToCamelCase(fileName);
           if (isDefault) {
             defaultTheme.write('\n        "$fileName": "${file.path}",');
-            resourceSettings.write('\n    _$fileName = null;');
-            resourceFields.write('''\n\n  static String? _$fileName;
-  static String get $fileName{
-    _$fileName ??= _findResource("$fileName");
-    return _$fileName!;
+            resourceSettings.write('\n    _$shownName = null;');
+            resourceFields.write('''\n\n  static String? _$shownName;
+  static String get $shownName{
+    _$shownName ??= _findResource("$fileName");
+    return _$shownName!;
   }''');
           } else {
             otherThemes.write('\n         "$fileName": "${file.path}",');

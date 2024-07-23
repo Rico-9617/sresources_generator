@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
+import 'package:sresources_generator/generator/_tools.dart';
 import 'package:xml2json/xml2json.dart';
 import 'package:yaml/yaml.dart';
 
@@ -180,14 +181,16 @@ class $className{
     } else {
       value = '0x$value';
     }
+    final shownName = convertToCamelCase(colorName);
     if (isDefault) {
       defaultTheme.write('\n        "$colorName": const Color($value),');
-      resourceSettings.write('\n    _$colorName = null;');
-      resourceFields.write('''\n\n  static Color? _$colorName;
-      static Color get $colorName{
-        _$colorName ??= _findResource("$colorName");
-        return _$colorName!;
-      }''');
+      resourceSettings.write('\n    _$shownName = null;');
+      resourceFields.write('''\n
+  static Color? _$shownName;
+  static Color get $shownName{
+    _$shownName ??= _findResource("$colorName");
+    return _$shownName!;
+  }''');
     } else {
       otherThemes.write('\n         "$colorName": const Color($value),');
     }
