@@ -35,11 +35,11 @@ class AppColors{
     
     _white = null;
     _black = null;
-    _gray_70 = null;
+    _gray70 = null;
     _test = null;
-    _gray_410 = null;
-    _crimson_red = null;
-    _yellow_ocher = null;
+    _gray410 = null;
+    _crimsonRed = null;
+    _yellowOcher = null;
   }
 
   static Color _findResource(String name){
@@ -62,45 +62,45 @@ class AppColors{
   
 
   static Color? _white;
-      static Color get white{
-        _white ??= _findResource("white");
-        return _white!;
-      }
+  static Color get white{
+    _white ??= _findResource("white");
+    return _white!;
+  }
 
   static Color? _black;
-      static Color get black{
-        _black ??= _findResource("black");
-        return _black!;
-      }
+  static Color get black{
+    _black ??= _findResource("black");
+    return _black!;
+  }
 
-  static Color? _gray_70;
-      static Color get gray_70{
-        _gray_70 ??= _findResource("gray_70");
-        return _gray_70!;
-      }
+  static Color? _gray70;
+  static Color get gray70{
+    _gray70 ??= _findResource("gray_70");
+    return _gray70!;
+  }
 
   static Color? _test;
-      static Color get test{
-        _test ??= _findResource("test");
-        return _test!;
-      }
+  static Color get test{
+    _test ??= _findResource("test");
+    return _test!;
+  }
 
-  static Color? _gray_410;
-      static Color get gray_410{
-        _gray_410 ??= _findResource("gray_410");
-        return _gray_410!;
-      }
+  static Color? _gray410;
+  static Color get gray410{
+    _gray410 ??= _findResource("gray_410");
+    return _gray410!;
+  }
 
-  static Color? _crimson_red;
-      static Color get crimson_red{
-        _crimson_red ??= _findResource("crimson_red");
-        return _crimson_red!;
-      }
+  static Color? _crimsonRed;
+  static Color get crimsonRed{
+    _crimsonRed ??= _findResource("crimson_red");
+    return _crimsonRed!;
+  }
 
-  static Color? _yellow_ocher;
-      static Color get yellow_ocher{
-        _yellow_ocher ??= _findResource("yellow_ocher");
-        return _yellow_ocher!;
-      }
+  static Color? _yellowOcher;
+  static Color get yellowOcher{
+    _yellowOcher ??= _findResource("yellow_ocher");
+    return _yellowOcher!;
+  }
 }
       
